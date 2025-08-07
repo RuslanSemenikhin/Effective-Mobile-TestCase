@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema:
+      - "./db/migrations/000001_create_schems.up.sql"
+      - "./db/migrations/000002_create_tables.up.sql"
+    queries: ./db/querys
+    gen:
+      go:
+        package: "crud_db"
+        out: ./db/querys/gen

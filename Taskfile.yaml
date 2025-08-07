@@ -1,0 +1,16 @@
+version: '3'
+
+tasks:
+
+  sqlc_generation:
+    desc: "кодогенерация для взаимодействия с БД"
+    dir: ./controller
+    cmds:
+      - sqlc compile
+      - sqlc generate
+  
+  big_start:
+    desc: "Запуск всех сервисов"
+    deps: [sqlc_generation]
+    cmds:
+      - docker compose --env-file ./.env -f ./docker-compose.yaml up --build -d
