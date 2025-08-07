@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package subscription;
+
+option go_package = "grpc/gen;subscription";
+
+service SubscriptionService {
+    rpc GetAllSubscriptions (AllSubscriptionsRequest) returns (AllSubscriptionsResponse);
+}
+
+message Subscription {
+    string service_name = 1;
+    int64 price = 2;
+    string user_uuid = 3;
+    string start_date = 4;
+    string stop_date = 5;
+}
+
+message AllSubscriptionsRequest {
+    string req_id = 1;
+}
+
+message AllSubscriptionsResponse {
+    string req_id = 1;
+    repeated Subscription subscriptions = 2;
+}
