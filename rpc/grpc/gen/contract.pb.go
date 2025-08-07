@@ -97,27 +97,31 @@ func (x *Subscription) GetStopDate() string {
 	return ""
 }
 
-type AllSubscriptionsRequest struct {
+type ListSubscriptionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReqId         string                 `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	StartDate     *string                `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3,oneof" json:"start_date,omitempty"`
+	StopDate      *string                `protobuf:"bytes,3,opt,name=stop_date,json=stopDate,proto3,oneof" json:"stop_date,omitempty"`
+	UserUuid      *string                `protobuf:"bytes,4,opt,name=user_uuid,json=userUuid,proto3,oneof" json:"user_uuid,omitempty"`
+	ServiceName   *string                `protobuf:"bytes,5,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AllSubscriptionsRequest) Reset() {
-	*x = AllSubscriptionsRequest{}
+func (x *ListSubscriptionsRequest) Reset() {
+	*x = ListSubscriptionsRequest{}
 	mi := &file_contract_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AllSubscriptionsRequest) String() string {
+func (x *ListSubscriptionsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AllSubscriptionsRequest) ProtoMessage() {}
+func (*ListSubscriptionsRequest) ProtoMessage() {}
 
-func (x *AllSubscriptionsRequest) ProtoReflect() protoreflect.Message {
+func (x *ListSubscriptionsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_contract_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -129,19 +133,47 @@ func (x *AllSubscriptionsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AllSubscriptionsRequest.ProtoReflect.Descriptor instead.
-func (*AllSubscriptionsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListSubscriptionsRequest.ProtoReflect.Descriptor instead.
+func (*ListSubscriptionsRequest) Descriptor() ([]byte, []int) {
 	return file_contract_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AllSubscriptionsRequest) GetReqId() string {
+func (x *ListSubscriptionsRequest) GetReqId() string {
 	if x != nil {
 		return x.ReqId
 	}
 	return ""
 }
 
-type AllSubscriptionsResponse struct {
+func (x *ListSubscriptionsRequest) GetStartDate() string {
+	if x != nil && x.StartDate != nil {
+		return *x.StartDate
+	}
+	return ""
+}
+
+func (x *ListSubscriptionsRequest) GetStopDate() string {
+	if x != nil && x.StopDate != nil {
+		return *x.StopDate
+	}
+	return ""
+}
+
+func (x *ListSubscriptionsRequest) GetUserUuid() string {
+	if x != nil && x.UserUuid != nil {
+		return *x.UserUuid
+	}
+	return ""
+}
+
+func (x *ListSubscriptionsRequest) GetServiceName() string {
+	if x != nil && x.ServiceName != nil {
+		return *x.ServiceName
+	}
+	return ""
+}
+
+type ListSubscriptionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReqId         string                 `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
 	Subscriptions []*Subscription        `protobuf:"bytes,2,rep,name=subscriptions,proto3" json:"subscriptions,omitempty"`
@@ -149,20 +181,20 @@ type AllSubscriptionsResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AllSubscriptionsResponse) Reset() {
-	*x = AllSubscriptionsResponse{}
+func (x *ListSubscriptionsResponse) Reset() {
+	*x = ListSubscriptionsResponse{}
 	mi := &file_contract_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AllSubscriptionsResponse) String() string {
+func (x *ListSubscriptionsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AllSubscriptionsResponse) ProtoMessage() {}
+func (*ListSubscriptionsResponse) ProtoMessage() {}
 
-func (x *AllSubscriptionsResponse) ProtoReflect() protoreflect.Message {
+func (x *ListSubscriptionsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_contract_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -174,19 +206,19 @@ func (x *AllSubscriptionsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AllSubscriptionsResponse.ProtoReflect.Descriptor instead.
-func (*AllSubscriptionsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListSubscriptionsResponse.ProtoReflect.Descriptor instead.
+func (*ListSubscriptionsResponse) Descriptor() ([]byte, []int) {
 	return file_contract_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AllSubscriptionsResponse) GetReqId() string {
+func (x *ListSubscriptionsResponse) GetReqId() string {
 	if x != nil {
 		return x.ReqId
 	}
 	return ""
 }
 
-func (x *AllSubscriptionsResponse) GetSubscriptions() []*Subscription {
+func (x *ListSubscriptionsResponse) GetSubscriptions() []*Subscription {
 	if x != nil {
 		return x.Subscriptions
 	}
@@ -204,14 +236,25 @@ const file_contract_proto_rawDesc = "" +
 	"\tuser_uuid\x18\x03 \x01(\tR\buserUuid\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x04 \x01(\tR\tstartDate\x12\x1b\n" +
-	"\tstop_date\x18\x05 \x01(\tR\bstopDate\"0\n" +
-	"\x17AllSubscriptionsRequest\x12\x15\n" +
-	"\x06req_id\x18\x01 \x01(\tR\x05reqId\"s\n" +
-	"\x18AllSubscriptionsResponse\x12\x15\n" +
+	"\tstop_date\x18\x05 \x01(\tR\bstopDate\"\xfd\x01\n" +
+	"\x18ListSubscriptionsRequest\x12\x15\n" +
+	"\x06req_id\x18\x01 \x01(\tR\x05reqId\x12\"\n" +
+	"\n" +
+	"start_date\x18\x02 \x01(\tH\x00R\tstartDate\x88\x01\x01\x12 \n" +
+	"\tstop_date\x18\x03 \x01(\tH\x01R\bstopDate\x88\x01\x01\x12 \n" +
+	"\tuser_uuid\x18\x04 \x01(\tH\x02R\buserUuid\x88\x01\x01\x12&\n" +
+	"\fservice_name\x18\x05 \x01(\tH\x03R\vserviceName\x88\x01\x01B\r\n" +
+	"\v_start_dateB\f\n" +
+	"\n" +
+	"_stop_dateB\f\n" +
+	"\n" +
+	"_user_uuidB\x0f\n" +
+	"\r_service_name\"t\n" +
+	"\x19ListSubscriptionsResponse\x12\x15\n" +
 	"\x06req_id\x18\x01 \x01(\tR\x05reqId\x12@\n" +
 	"\rsubscriptions\x18\x02 \x03(\v2\x1a.subscription.SubscriptionR\rsubscriptions2{\n" +
 	"\x13SubscriptionService\x12d\n" +
-	"\x13GetAllSubscriptions\x12%.subscription.AllSubscriptionsRequest\x1a&.subscription.AllSubscriptionsResponseB\x17Z\x15grpc/gen;subscriptionb\x06proto3"
+	"\x11ListSubscriptions\x12&.subscription.ListSubscriptionsRequest\x1a'.subscription.ListSubscriptionsResponseB\x17Z\x15grpc/gen;subscriptionb\x06proto3"
 
 var (
 	file_contract_proto_rawDescOnce sync.Once
@@ -227,14 +270,14 @@ func file_contract_proto_rawDescGZIP() []byte {
 
 var file_contract_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_contract_proto_goTypes = []any{
-	(*Subscription)(nil),             // 0: subscription.Subscription
-	(*AllSubscriptionsRequest)(nil),  // 1: subscription.AllSubscriptionsRequest
-	(*AllSubscriptionsResponse)(nil), // 2: subscription.AllSubscriptionsResponse
+	(*Subscription)(nil),              // 0: subscription.Subscription
+	(*ListSubscriptionsRequest)(nil),  // 1: subscription.ListSubscriptionsRequest
+	(*ListSubscriptionsResponse)(nil), // 2: subscription.ListSubscriptionsResponse
 }
 var file_contract_proto_depIdxs = []int32{
-	0, // 0: subscription.AllSubscriptionsResponse.subscriptions:type_name -> subscription.Subscription
-	1, // 1: subscription.SubscriptionService.GetAllSubscriptions:input_type -> subscription.AllSubscriptionsRequest
-	2, // 2: subscription.SubscriptionService.GetAllSubscriptions:output_type -> subscription.AllSubscriptionsResponse
+	0, // 0: subscription.ListSubscriptionsResponse.subscriptions:type_name -> subscription.Subscription
+	1, // 1: subscription.SubscriptionService.ListSubscriptions:input_type -> subscription.ListSubscriptionsRequest
+	2, // 2: subscription.SubscriptionService.ListSubscriptions:output_type -> subscription.ListSubscriptionsResponse
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -247,6 +290,7 @@ func file_contract_proto_init() {
 	if File_contract_proto != nil {
 		return
 	}
+	file_contract_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

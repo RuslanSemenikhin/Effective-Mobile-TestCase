@@ -2,13 +2,19 @@ version: '3'
 
 tasks:
 
-  sqlc_generation:
-    desc: "кодогенерация для взаимодействия с БД"
+  sqlc_gen:
+    desc: "SQLC кодогенерация"
     dir: ./controller
     cmds:
       - sqlc compile
       - sqlc generate
-  
+      
+  grpc_gen:
+    desc: "PROTOC (gRPC) кодогенерация"
+    dir: ./rpc
+    cmds:
+      - protoc --go_out=./ --go-grpc_out=./ --proto_path=./proto proto/contract.proto
+    
   big_start:
     desc: "Запуск всех сервисов"
     deps: [sqlc_generation]

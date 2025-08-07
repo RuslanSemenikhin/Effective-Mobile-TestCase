@@ -5,7 +5,7 @@ package subscription;
 option go_package = "grpc/gen;subscription";
 
 service SubscriptionService {
-    rpc GetAllSubscriptions (AllSubscriptionsRequest) returns (AllSubscriptionsResponse);
+    rpc ListSubscriptions (ListSubscriptionsRequest) returns (ListSubscriptionsResponse);
 }
 
 message Subscription {
@@ -16,11 +16,16 @@ message Subscription {
     string stop_date = 5;
 }
 
-message AllSubscriptionsRequest {
+message ListSubscriptionsRequest {
     string req_id = 1;
+    optional string start_date = 2;
+optional string stop_date = 3;
+optional string user_uuid = 4;
+optional string service_name = 5;
+
 }
 
-message AllSubscriptionsResponse {
+message ListSubscriptionsResponse {
     string req_id = 1;
     repeated Subscription subscriptions = 2;
 }
