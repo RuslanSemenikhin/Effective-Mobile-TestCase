@@ -19,9 +19,9 @@ message Subscription {
 message ListSubscriptionsRequest {
     string req_id = 1;
     optional string start_date = 2;
-optional string stop_date = 3;
-optional string user_uuid = 4;
-optional string service_name = 5;
+    optional string stop_date = 3;
+    optional string user_uuid = 4;
+    optional string service_name = 5;
 
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/grpc"
 	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/internal/models"
 	"github.com/joho/godotenv"
 )
@@ -14,10 +15,12 @@ func main() {
 		log.Fatal(".env fail does not exists")
 	}
 
-	config, err := models.NewDbConfig()
+	config, err := models.NewConfig()
 	if err != nil {
-		fmt.Println("===>>>")
+		log.Fatal(err)
 	}
+
+	grpc.Start(config.Port)
 
 	fmt.Println(config)
 }
