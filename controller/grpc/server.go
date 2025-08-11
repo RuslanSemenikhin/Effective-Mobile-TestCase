@@ -54,6 +54,46 @@ func (s *Server) AddSubscription(
 	return resp, nil
 }
 
+func (s *Server) UpdatedSubscription(
+	ctx context.Context,
+	req *grpcGen.UpdatedSubscriptionRequest,
+) (*grpcGen.UpdatedSubscriptionResponse, error) {
+	log.Printf("start method 'UpdatedSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	log.Println("===>>>", req.ServiceName)
+	res := usecase.UpdatedSubscription()
+	log.Println(res)
+	sub := &grpcGen.Subscription{
+		ServiceName: res,
+	}
+
+	resp := &grpcGen.UpdatedSubscriptionResponse{
+		ReqID:        req.ReqID,
+		Subscription: sub,
+	}
+	log.Printf("finished successfuly method 'AddSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	return resp, nil
+}
+
+func (s *Server) DeleteSubscription(
+	ctx context.Context,
+	req *grpcGen.DeleteSubscriptionRequest,
+) (*grpcGen.DeleteSubscriptionResponse, error) {
+	log.Printf("start method 'DeleteSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	log.Println("===>>>", req.ServiceName)
+	res := usecase.DeleteSubscription()
+	log.Println(res)
+	sub := &grpcGen.Subscription{
+		ServiceName: res,
+	}
+
+	resp := &grpcGen.DeleteSubscriptionResponse{
+		ReqID:        req.ReqID,
+		Subscription: sub,
+	}
+	log.Printf("finished successfuly method 'DeleteSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	return resp, nil
+}
+
 func Start(port int) {
 	address := fmt.Sprintf(":%d", port)
 	listener, err := net.Listen("tcp", address)

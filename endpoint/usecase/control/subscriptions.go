@@ -9,9 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type AddSubRequest struct {
+type SubRequest struct {
 	ServiceName string `json:"service_name"`
-	Price       int    `json:"price"`
+	Price       int64  `json:"price"`
 	UserUuid    string `json:"user_uuid"`
 	StartDate   string `json:"start_date"`
 	StopDate    string `json:"stop_date"`
@@ -54,7 +54,7 @@ func AddSubscription(
 	reqID := uuid.New().String()
 	log.Printf("function 'AddSubscription' into endpoint service start with requestID - '%s'", reqID)
 
-	var req AddSubRequest
+	var req SubRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		log.Printf("function 'AddSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
@@ -84,6 +84,70 @@ func AddSubscription(
 		})
 	}
 
-	ctx.JSON(http.StatusOK, resp)
+	ctx.JSON(http.StatusCreated, resp)
 	log.Printf("function 'AddSubscription' into endpoint service finished successfuly with requestID - '%s'", reqID)
+}
+
+func UpdatedSubscription(
+	ctx *gin.Context,
+	client g.SubscriptionServiceClient,
+) {
+	reqID := uuid.New().String()
+	log.Printf("function 'UpdatedSubscription' into endpoint service start with requestID - '%s'", reqID)
+
+	var req SubRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		log.Printf("function 'AddSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	r := &g.UpdatedSubscriptionRequest{
+		ReqID:       reqID,
+		UserUuid:    req.UserUuid,
+		ServiceName: req.ServiceName,
+		StartDate:   &req.StartDate,
+		StopDate:    &req.StopDate,
+		Price:       &req.Price,
+	}
+
+	resp, err := client.UpdatedSubscription(ctx, r)
+	if err != nil {
+		log.Printf("function 'UpdatedSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusAccepted, resp)
+	log.Printf("function 'UpdatedSubscription' into endpoint service finished successfuly with requestID - '%s'", reqID)
+}
+
+func DeleteSubscription(
+	ctx *gin.Context,
+	client g.SubscriptionServiceClient,
+) {
+	reqID := uuid.New().String()
+	log.Printf("function 'DeleteSubscription' into endpoint service start with requestID - '%s'", reqID)
+
+	userUuid := ctx.Query("user_uuid")
+	serviceName := ctx.Query("service_name")
+
+	r := &g.DeleteSubscriptionRequest{
+		ReqID:       reqID,
+		UserUuid:    userUuid,
+		ServiceName: serviceName,
+	}
+
+	resp, err := client.DeleteSubscription(ctx, r)
+	if err != nil {
+		log.Printf("function 'DeleteSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, resp)
+	log.Printf("function 'DeleteSubscription' into endpoint service finished successfuly with requestID - '%s'", reqID)
 }

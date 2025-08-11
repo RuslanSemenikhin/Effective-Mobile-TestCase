@@ -42,11 +42,13 @@ func (e *EndpointServer) Start(
 func (e *EndpointServer) startHttp(port int) {
 	portStr := fmt.Sprintf(":%d", port)
 	if err := http.ListenAndServe(portStr, e.Router); err != nil {
-		log.Fatalf("broken endpoint")
+		log.Fatalf("can`t start http-endpoint - '%v'", err.Error())
 	}
 }
 
 func initializeRoutes(router *gin.Engine, client g.SubscriptionServiceClient) {
 	router.GET("/service/subscription", func(ctx *gin.Context) { control.ListSubscriptions(ctx, client) })
 	router.POST("/service/subscription", func(ctx *gin.Context) { control.AddSubscription(ctx, client) })
+	router.PUT("/service/subscription", func(ctx *gin.Context) { control.UpdatedSubscription(ctx, client) })
+	router.DELETE("/service/subscription", func(ctx *gin.Context) { control.DeleteSubscription(ctx, client) })
 }
