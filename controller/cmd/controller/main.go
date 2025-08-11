@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/db"
 	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/grpc"
 	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/internal/models"
 	"github.com/joho/godotenv"
@@ -21,7 +22,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	grpc.Start(config.Port)
+	dbCon, err := db.StartDbCon(config)
+	if err != nil {
+		return
+	}
+
+	grpc.Start(config, dbCon)
 
 	fmt.Println(config)
 }

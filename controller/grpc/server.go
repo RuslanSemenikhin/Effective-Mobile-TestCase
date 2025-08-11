@@ -2,10 +2,12 @@ package grpc
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net"
 
+	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/internal/models"
 	grpcGen "github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/rpc/grpc/gen"
 	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/usecase"
 	"google.golang.org/grpc"
@@ -13,6 +15,7 @@ import (
 
 type Server struct {
 	grpcGen.SubscriptionServiceServer
+	db *sql.DB
 }
 
 func (s *Server) ListSubscriptions(
@@ -20,18 +23,35 @@ func (s *Server) ListSubscriptions(
 	req *grpcGen.ListSubscriptionsRequest,
 ) (*grpcGen.ListSubscriptionsResponse, error) {
 	log.Printf("start method 'ListSubscriptions' into controller/grpc with requestId - '%s'", req.ReqId)
-	res := usecase.ListSubscriptions()
-	log.Println(res)
-	subsSlc := &grpcGen.Subscription{
-		ServiceName: res,
+	res, err := usecase.ListSubscriptions(
+		ctx,
+		s.db,
+		req.ServiceName,
+		req.UserUuid,
+		req.StartDate,
+		req.StopDate,
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	resp := &grpcGen.ListSubscriptionsResponse{
+	subsInfos := []*grpcGen.ListSubscriptionsInfo{}
+
+	for _, r := range res {
+		subInfo := &grpcGen.ListSubscriptionsInfo{
+			UserUuid:    r.UserUuid,
+			ServiceName: r.ServiceName.String,
+			Price:       r.ServicePrice,
+		}
+		subsInfos = append(subsInfos, subInfo)
+	}
+
+	subsSlc := &grpcGen.ListSubscriptionsResponse{
 		ReqId:         req.ReqId,
-		Subscriptions: []*grpcGen.Subscription{subsSlc},
+		Subscriptions: subsInfos,
 	}
 	log.Printf("finished successfuly method 'ListSubscriptions' into controller/grpc with requestId - '%s'", req.ReqId)
-	return resp, nil
+	return subsSlc, nil
 }
 
 func (s *Server) AddSubscription(
@@ -39,11 +59,25 @@ func (s *Server) AddSubscription(
 	req *grpcGen.AddSubscriptionRequest,
 ) (*grpcGen.AddSubscriptionResponse, error) {
 	log.Printf("start method 'AddSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
-	log.Println("===>>>", req.Subscription)
-	res := usecase.AddSubscription()
-	log.Println(res)
+	res, err := usecase.AddSubscription(
+		ctx,
+		s.db,
+		req.Subscription.ServiceName,
+		req.Subscription.UserUuid,
+		req.Subscription.Price,
+		req.Subscription.StartDate,
+		req.Subscription.StopDate,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	sub := &grpcGen.Subscription{
-		ServiceName: res,
+		ServiceName: req.Subscription.ServiceName,
+		Price:       req.Subscription.Price,
+		UserUuid:    res.UserUuid,
+		StartDate:   res.StartDate.Format("01.2006"),
+		StopDate:    res.StopDate.Format("01.2006"),
 	}
 
 	resp := &grpcGen.AddSubscriptionResponse{
@@ -59,8 +93,15 @@ func (s *Server) UpdatedSubscription(
 	req *grpcGen.UpdatedSubscriptionRequest,
 ) (*grpcGen.UpdatedSubscriptionResponse, error) {
 	log.Printf("start method 'UpdatedSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
-	log.Println("===>>>", req.ServiceName)
-	res := usecase.UpdatedSubscription()
+	res := usecase.UpdatedSubscription(
+		ctx,
+		s.db,
+		req.ServiceName,
+		req.UserUuid,
+		req.Price,
+		req.StartDate,
+		req.StopDate,
+	)
 	log.Println(res)
 	sub := &grpcGen.Subscription{
 		ServiceName: res,
@@ -79,8 +120,12 @@ func (s *Server) DeleteSubscription(
 	req *grpcGen.DeleteSubscriptionRequest,
 ) (*grpcGen.DeleteSubscriptionResponse, error) {
 	log.Printf("start method 'DeleteSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
-	log.Println("===>>>", req.ServiceName)
-	res := usecase.DeleteSubscription()
+	res := usecase.DeleteSubscription(
+		ctx,
+		s.db,
+		req.ServiceName,
+		req.UserUuid,
+	)
 	log.Println(res)
 	sub := &grpcGen.Subscription{
 		ServiceName: res,
@@ -94,15 +139,17 @@ func (s *Server) DeleteSubscription(
 	return resp, nil
 }
 
-func Start(port int) {
-	address := fmt.Sprintf(":%d", port)
+func Start(config *models.Config, dbCon *sql.DB) {
+	address := fmt.Sprintf(":%d", config.Port)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	server := grpc.NewServer()
-	grpcGen.RegisterSubscriptionServiceServer(server, &Server{})
+	grpcGen.RegisterSubscriptionServiceServer(server, &Server{
+		db: dbCon,
+	})
 	log.Printf("controller start on port - '%s'", address)
 
 	if err := server.Serve(listener); err != nil {

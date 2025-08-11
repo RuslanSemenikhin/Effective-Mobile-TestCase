@@ -19,6 +19,12 @@ message Subscription {
     string stop_date = 5;
 }
 
+message ListSubscriptionsInfo{
+    string user_uuid = 1;
+    string service_name = 2;
+    int64 price =3;
+}
+
 message ListSubscriptionsRequest {
     string req_id = 1;
     optional string start_date = 2;
@@ -29,7 +35,7 @@ message ListSubscriptionsRequest {
 
 message ListSubscriptionsResponse {
     string req_id = 1;
-    repeated Subscription subscriptions = 2;
+    repeated ListSubscriptionsInfo subscriptions = 2;
 }
 
 message AddSubscriptionRequest{

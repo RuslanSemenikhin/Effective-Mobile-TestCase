@@ -46,6 +46,9 @@ services:
         - .env
       volumes:
         - ./.env:/app/.env:ro
+      depends_on:
+        postgres:
+          condition: service_healthy
       networks:
         - effective_modile
     
