@@ -10,7 +10,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load("../../../.env")
+	// err := godotenv.Load("../../../.env")
+	err := godotenv.Load("/app/.env")
 	if err != nil {
 		log.Fatal(".env fail does not exists")
 	}
@@ -21,5 +22,6 @@ func main() {
 	}
 
 	fmt.Println(config)
-	http.Start(config.Port)
+	endpointServer := http.NewEndpointServer()
+	endpointServer.Start(config.PortEndpoint, config.HostController, config.PortController)
 }

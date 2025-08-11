@@ -3,7 +3,9 @@ package models
 import "github.com/kelseyhightower/envconfig"
 
 type Config struct {
-	Port int `envconfig:"ENDPOINT_GRPC_PORT"`
+	PortEndpoint   int    `envconfig:"ENDPOINT_PORT"`
+	HostController string `envconfig:"CONTROLLER_HOST"`
+	PortController int    `envconfig:"CONTROLLER_PORT"`
 }
 
 func NewConfig() (*Config, error) {

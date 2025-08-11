@@ -35,3 +35,29 @@ services:
       restart: on-failure
       networks:
         - effective_modile
+    
+    controller:
+      build:
+        context: .
+        dockerfile: controller/Dockerfile
+      ports:
+        - "${CONTROLLER_PORT}:${CONTROLLER_PORT}"
+      env_file:
+        - .env
+      volumes:
+        - ./.env:/app/.env:ro
+      networks:
+        - effective_modile
+    
+    endpoint:
+      build:
+        context: .
+        dockerfile: endpoint/Dockerfile
+      ports:
+        - "${ENDPOINT_PORT}:${ENDPOINT_PORT}"
+      env_file:
+        - .env
+      volumes:
+        - ./.env:/app/.env:ro
+      networks:
+        - effective_modile

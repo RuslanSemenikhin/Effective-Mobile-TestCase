@@ -10,7 +10,7 @@ type Config struct {
 	DBUser     string `envconfig:"POSTGRES_USER"`
 	DBPassword string `envconfig:"POSTGRES_PASSWORD"`
 	DBName     string `envconfig:"POSTGRES_DB_NAME"`
-	Port       int    `envconfig:"CONTROLLER_GRPC_PORT"`
+	Port       int    `envconfig:"CONTROLLER_PORT"`
 }
 
 func NewConfig() (*Config, error) {
