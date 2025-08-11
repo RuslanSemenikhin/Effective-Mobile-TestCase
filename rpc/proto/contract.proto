@@ -6,6 +6,9 @@ option go_package = "grpc/gen;subscription";
 
 service SubscriptionService {
     rpc ListSubscriptions (ListSubscriptionsRequest) returns (ListSubscriptionsResponse);
+    rpc AddSubscription (AddSubscriptionRequest) returns (AddSubscriptionResponse);
+    rpc UpdatedSubscription (UpdatedSubscriptionRequest) returns (UpdatedSubscriptionResponse);
+    rpc DeleteSubscription (DeleteSubscriptionRequest) returns (DeleteSubscriptionResponse);
 }
 
 message Subscription {
@@ -22,10 +25,44 @@ message ListSubscriptionsRequest {
     optional string stop_date = 3;
     optional string user_uuid = 4;
     optional string service_name = 5;
-
 }
 
 message ListSubscriptionsResponse {
     string req_id = 1;
     repeated Subscription subscriptions = 2;
+}
+
+message AddSubscriptionRequest{
+    string reqID = 1;
+    Subscription subscription = 2;
+}
+
+message AddSubscriptionResponse{
+    string reqID = 1;
+    Subscription subscription = 2;
+}
+
+message UpdatedSubscriptionRequest{
+    string reqID = 1;
+    string user_uuid = 2;
+    string service_name = 3;
+    optional string start_date = 4;
+    optional string stop_date = 5;
+    optional int64 price = 6;
+}
+
+message UpdatedSubscriptionResponse{
+    string reqID = 1;
+    Subscription subscription = 2;
+}
+
+message DeleteSubscriptionRequest{
+    string reqID = 1;
+    string user_uuid = 2;
+    string service_name = 3;
+}
+
+message DeleteSubscriptionResponse{
+    string reqID = 1;
+    Subscription subscription = 2;
 }

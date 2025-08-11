@@ -19,7 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SubscriptionService_ListSubscriptions_FullMethodName = "/subscription.SubscriptionService/ListSubscriptions"
+	SubscriptionService_ListSubscriptions_FullMethodName   = "/subscription.SubscriptionService/ListSubscriptions"
+	SubscriptionService_AddSubscription_FullMethodName     = "/subscription.SubscriptionService/AddSubscription"
+	SubscriptionService_UpdatedSubscription_FullMethodName = "/subscription.SubscriptionService/UpdatedSubscription"
+	SubscriptionService_DeleteSubscription_FullMethodName  = "/subscription.SubscriptionService/DeleteSubscription"
 )
 
 // SubscriptionServiceClient is the client API for SubscriptionService service.
@@ -27,6 +30,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SubscriptionServiceClient interface {
 	ListSubscriptions(ctx context.Context, in *ListSubscriptionsRequest, opts ...grpc.CallOption) (*ListSubscriptionsResponse, error)
+	AddSubscription(ctx context.Context, in *AddSubscriptionRequest, opts ...grpc.CallOption) (*AddSubscriptionResponse, error)
+	UpdatedSubscription(ctx context.Context, in *UpdatedSubscriptionRequest, opts ...grpc.CallOption) (*UpdatedSubscriptionResponse, error)
+	DeleteSubscription(ctx context.Context, in *DeleteSubscriptionRequest, opts ...grpc.CallOption) (*DeleteSubscriptionResponse, error)
 }
 
 type subscriptionServiceClient struct {
@@ -47,11 +53,44 @@ func (c *subscriptionServiceClient) ListSubscriptions(ctx context.Context, in *L
 	return out, nil
 }
 
+func (c *subscriptionServiceClient) AddSubscription(ctx context.Context, in *AddSubscriptionRequest, opts ...grpc.CallOption) (*AddSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddSubscriptionResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_AddSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) UpdatedSubscription(ctx context.Context, in *UpdatedSubscriptionRequest, opts ...grpc.CallOption) (*UpdatedSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatedSubscriptionResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_UpdatedSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) DeleteSubscription(ctx context.Context, in *DeleteSubscriptionRequest, opts ...grpc.CallOption) (*DeleteSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSubscriptionResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_DeleteSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionServiceServer is the server API for SubscriptionService service.
 // All implementations must embed UnimplementedSubscriptionServiceServer
 // for forward compatibility.
 type SubscriptionServiceServer interface {
 	ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error)
+	AddSubscription(context.Context, *AddSubscriptionRequest) (*AddSubscriptionResponse, error)
+	UpdatedSubscription(context.Context, *UpdatedSubscriptionRequest) (*UpdatedSubscriptionResponse, error)
+	DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error)
 	mustEmbedUnimplementedSubscriptionServiceServer()
 }
 
@@ -64,6 +103,15 @@ type UnimplementedSubscriptionServiceServer struct{}
 
 func (UnimplementedSubscriptionServiceServer) ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSubscriptions not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) AddSubscription(context.Context, *AddSubscriptionRequest) (*AddSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddSubscription not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) UpdatedSubscription(context.Context, *UpdatedSubscriptionRequest) (*UpdatedSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatedSubscription not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubscription not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
 func (UnimplementedSubscriptionServiceServer) testEmbeddedByValue()                             {}
@@ -104,6 +152,60 @@ func _SubscriptionService_ListSubscriptions_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionService_AddSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).AddSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_AddSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).AddSubscription(ctx, req.(*AddSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_UpdatedSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatedSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).UpdatedSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_UpdatedSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).UpdatedSubscription(ctx, req.(*UpdatedSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_DeleteSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).DeleteSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_DeleteSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).DeleteSubscription(ctx, req.(*DeleteSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +216,18 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSubscriptions",
 			Handler:    _SubscriptionService_ListSubscriptions_Handler,
+		},
+		{
+			MethodName: "AddSubscription",
+			Handler:    _SubscriptionService_AddSubscription_Handler,
+		},
+		{
+			MethodName: "UpdatedSubscription",
+			Handler:    _SubscriptionService_UpdatedSubscription_Handler,
+		},
+		{
+			MethodName: "DeleteSubscription",
+			Handler:    _SubscriptionService_DeleteSubscription_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

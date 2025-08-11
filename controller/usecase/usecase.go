@@ -1,5 +1,9 @@
 package usecase
 
 func ListSubscriptions() string {
-	return "method into controller"
+	return "'ListSubscriptions' method into controller"
+}
+
+func AddSubscription() string {
+	return "'AddSubscription' method into controller"
 }

@@ -19,6 +19,7 @@ func (s *Server) ListSubscriptions(
 	ctx context.Context,
 	req *grpcGen.ListSubscriptionsRequest,
 ) (*grpcGen.ListSubscriptionsResponse, error) {
+	log.Printf("start method 'ListSubscriptions' into controller/grpc with requestId - '%s'", req.ReqId)
 	res := usecase.ListSubscriptions()
 	log.Println(res)
 	subsSlc := &grpcGen.Subscription{
@@ -29,6 +30,27 @@ func (s *Server) ListSubscriptions(
 		ReqId:         req.ReqId,
 		Subscriptions: []*grpcGen.Subscription{subsSlc},
 	}
+	log.Printf("finished successfuly method 'ListSubscriptions' into controller/grpc with requestId - '%s'", req.ReqId)
+	return resp, nil
+}
+
+func (s *Server) AddSubscription(
+	ctx context.Context,
+	req *grpcGen.AddSubscriptionRequest,
+) (*grpcGen.AddSubscriptionResponse, error) {
+	log.Printf("start method 'AddSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	log.Println("===>>>", req.Subscription)
+	res := usecase.AddSubscription()
+	log.Println(res)
+	sub := &grpcGen.Subscription{
+		ServiceName: res,
+	}
+
+	resp := &grpcGen.AddSubscriptionResponse{
+		ReqID:        req.ReqID,
+		Subscription: sub,
+	}
+	log.Printf("finished successfuly method 'AddSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
 	return resp, nil
 }
 

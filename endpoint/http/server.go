@@ -48,4 +48,5 @@ func (e *EndpointServer) startHttp(port int) {
 
 func initializeRoutes(router *gin.Engine, client g.SubscriptionServiceClient) {
 	router.GET("/service/subscription", func(ctx *gin.Context) { control.ListSubscriptions(ctx, client) })
+	router.POST("/service/subscription", func(ctx *gin.Context) { control.AddSubscription(ctx, client) })
 }
