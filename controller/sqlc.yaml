@@ -9,3 +9,4 @@ sql:
       go:
         package: "crud_db"
         out: ./db/querys/gen
+        emit_pointers_for_null_types: true

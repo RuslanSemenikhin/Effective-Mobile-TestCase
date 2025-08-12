@@ -100,8 +100,6 @@ func (x *Subscription) GetStopDate() string {
 type ListSubscriptionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReqId         string                 `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	StartDate     *string                `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3,oneof" json:"start_date,omitempty"`
-	StopDate      *string                `protobuf:"bytes,3,opt,name=stop_date,json=stopDate,proto3,oneof" json:"stop_date,omitempty"`
 	UserUuid      *string                `protobuf:"bytes,4,opt,name=user_uuid,json=userUuid,proto3,oneof" json:"user_uuid,omitempty"`
 	ServiceName   *string                `protobuf:"bytes,5,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -141,20 +139,6 @@ func (*ListSubscriptionsRequest) Descriptor() ([]byte, []int) {
 func (x *ListSubscriptionsRequest) GetReqId() string {
 	if x != nil {
 		return x.ReqId
-	}
-	return ""
-}
-
-func (x *ListSubscriptionsRequest) GetStartDate() string {
-	if x != nil && x.StartDate != nil {
-		return *x.StartDate
-	}
-	return ""
-}
-
-func (x *ListSubscriptionsRequest) GetStopDate() string {
-	if x != nil && x.StopDate != nil {
-		return *x.StopDate
 	}
 	return ""
 }
@@ -577,6 +561,134 @@ func (x *DeleteSubscriptionResponse) GetSubscription() *Subscription {
 	return nil
 }
 
+type TotalPriceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReqID         string                 `protobuf:"bytes,1,opt,name=reqID,proto3" json:"reqID,omitempty"`
+	StartDate     string                 `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	StopDate      string                 `protobuf:"bytes,3,opt,name=stop_date,json=stopDate,proto3" json:"stop_date,omitempty"`
+	UserUuid      *string                `protobuf:"bytes,4,opt,name=user_uuid,json=userUuid,proto3,oneof" json:"user_uuid,omitempty"`
+	ServiceName   *string                `protobuf:"bytes,5,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TotalPriceRequest) Reset() {
+	*x = TotalPriceRequest{}
+	mi := &file_contract_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TotalPriceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TotalPriceRequest) ProtoMessage() {}
+
+func (x *TotalPriceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_contract_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TotalPriceRequest.ProtoReflect.Descriptor instead.
+func (*TotalPriceRequest) Descriptor() ([]byte, []int) {
+	return file_contract_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *TotalPriceRequest) GetReqID() string {
+	if x != nil {
+		return x.ReqID
+	}
+	return ""
+}
+
+func (x *TotalPriceRequest) GetStartDate() string {
+	if x != nil {
+		return x.StartDate
+	}
+	return ""
+}
+
+func (x *TotalPriceRequest) GetStopDate() string {
+	if x != nil {
+		return x.StopDate
+	}
+	return ""
+}
+
+func (x *TotalPriceRequest) GetUserUuid() string {
+	if x != nil && x.UserUuid != nil {
+		return *x.UserUuid
+	}
+	return ""
+}
+
+func (x *TotalPriceRequest) GetServiceName() string {
+	if x != nil && x.ServiceName != nil {
+		return *x.ServiceName
+	}
+	return ""
+}
+
+type TotalPriceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReqID         string                 `protobuf:"bytes,1,opt,name=reqID,proto3" json:"reqID,omitempty"`
+	TotalPrice    int64                  `protobuf:"varint,2,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TotalPriceResponse) Reset() {
+	*x = TotalPriceResponse{}
+	mi := &file_contract_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TotalPriceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TotalPriceResponse) ProtoMessage() {}
+
+func (x *TotalPriceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_contract_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TotalPriceResponse.ProtoReflect.Descriptor instead.
+func (*TotalPriceResponse) Descriptor() ([]byte, []int) {
+	return file_contract_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *TotalPriceResponse) GetReqID() string {
+	if x != nil {
+		return x.ReqID
+	}
+	return ""
+}
+
+func (x *TotalPriceResponse) GetTotalPrice() int64 {
+	if x != nil {
+		return x.TotalPrice
+	}
+	return 0
+}
+
 var File_contract_proto protoreflect.FileDescriptor
 
 const file_contract_proto_rawDesc = "" +
@@ -588,17 +700,11 @@ const file_contract_proto_rawDesc = "" +
 	"\tuser_uuid\x18\x03 \x01(\tR\buserUuid\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x04 \x01(\tR\tstartDate\x12\x1b\n" +
-	"\tstop_date\x18\x05 \x01(\tR\bstopDate\"\xfd\x01\n" +
+	"\tstop_date\x18\x05 \x01(\tR\bstopDate\"\x9a\x01\n" +
 	"\x18ListSubscriptionsRequest\x12\x15\n" +
-	"\x06req_id\x18\x01 \x01(\tR\x05reqId\x12\"\n" +
-	"\n" +
-	"start_date\x18\x02 \x01(\tH\x00R\tstartDate\x88\x01\x01\x12 \n" +
-	"\tstop_date\x18\x03 \x01(\tH\x01R\bstopDate\x88\x01\x01\x12 \n" +
-	"\tuser_uuid\x18\x04 \x01(\tH\x02R\buserUuid\x88\x01\x01\x12&\n" +
-	"\fservice_name\x18\x05 \x01(\tH\x03R\vserviceName\x88\x01\x01B\r\n" +
-	"\v_start_dateB\f\n" +
-	"\n" +
-	"_stop_dateB\f\n" +
+	"\x06req_id\x18\x01 \x01(\tR\x05reqId\x12 \n" +
+	"\tuser_uuid\x18\x04 \x01(\tH\x00R\buserUuid\x88\x01\x01\x12&\n" +
+	"\fservice_name\x18\x05 \x01(\tH\x01R\vserviceName\x88\x01\x01B\f\n" +
 	"\n" +
 	"_user_uuidB\x0f\n" +
 	"\r_service_name\"t\n" +
@@ -632,12 +738,28 @@ const file_contract_proto_rawDesc = "" +
 	"\fservice_name\x18\x03 \x01(\tR\vserviceName\"r\n" +
 	"\x1aDeleteSubscriptionResponse\x12\x14\n" +
 	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12>\n" +
-	"\fsubscription\x18\x02 \x01(\v2\x1a.subscription.SubscriptionR\fsubscription2\xb0\x03\n" +
+	"\fsubscription\x18\x02 \x01(\v2\x1a.subscription.SubscriptionR\fsubscription\"\xce\x01\n" +
+	"\x11TotalPriceRequest\x12\x14\n" +
+	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12\x1d\n" +
+	"\n" +
+	"start_date\x18\x02 \x01(\tR\tstartDate\x12\x1b\n" +
+	"\tstop_date\x18\x03 \x01(\tR\bstopDate\x12 \n" +
+	"\tuser_uuid\x18\x04 \x01(\tH\x00R\buserUuid\x88\x01\x01\x12&\n" +
+	"\fservice_name\x18\x05 \x01(\tH\x01R\vserviceName\x88\x01\x01B\f\n" +
+	"\n" +
+	"_user_uuidB\x0f\n" +
+	"\r_service_name\"K\n" +
+	"\x12TotalPriceResponse\x12\x14\n" +
+	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12\x1f\n" +
+	"\vtotal_price\x18\x02 \x01(\x03R\n" +
+	"totalPrice2\x81\x04\n" +
 	"\x13SubscriptionService\x12d\n" +
 	"\x11ListSubscriptions\x12&.subscription.ListSubscriptionsRequest\x1a'.subscription.ListSubscriptionsResponse\x12^\n" +
 	"\x0fAddSubscription\x12$.subscription.AddSubscriptionRequest\x1a%.subscription.AddSubscriptionResponse\x12j\n" +
 	"\x13UpdatedSubscription\x12(.subscription.UpdatedSubscriptionRequest\x1a).subscription.UpdatedSubscriptionResponse\x12g\n" +
-	"\x12DeleteSubscription\x12'.subscription.DeleteSubscriptionRequest\x1a(.subscription.DeleteSubscriptionResponseB\x17Z\x15grpc/gen;subscriptionb\x06proto3"
+	"\x12DeleteSubscription\x12'.subscription.DeleteSubscriptionRequest\x1a(.subscription.DeleteSubscriptionResponse\x12O\n" +
+	"\n" +
+	"TotalPrice\x12\x1f.subscription.TotalPriceRequest\x1a .subscription.TotalPriceResponseB\x17Z\x15grpc/gen;subscriptionb\x06proto3"
 
 var (
 	file_contract_proto_rawDescOnce sync.Once
@@ -651,7 +773,7 @@ func file_contract_proto_rawDescGZIP() []byte {
 	return file_contract_proto_rawDescData
 }
 
-var file_contract_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_contract_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_contract_proto_goTypes = []any{
 	(*Subscription)(nil),                // 0: subscription.Subscription
 	(*ListSubscriptionsRequest)(nil),    // 1: subscription.ListSubscriptionsRequest
@@ -662,26 +784,30 @@ var file_contract_proto_goTypes = []any{
 	(*UpdatedSubscriptionResponse)(nil), // 6: subscription.UpdatedSubscriptionResponse
 	(*DeleteSubscriptionRequest)(nil),   // 7: subscription.DeleteSubscriptionRequest
 	(*DeleteSubscriptionResponse)(nil),  // 8: subscription.DeleteSubscriptionResponse
+	(*TotalPriceRequest)(nil),           // 9: subscription.TotalPriceRequest
+	(*TotalPriceResponse)(nil),          // 10: subscription.TotalPriceResponse
 }
 var file_contract_proto_depIdxs = []int32{
-	0, // 0: subscription.ListSubscriptionsResponse.subscriptions:type_name -> subscription.Subscription
-	0, // 1: subscription.AddSubscriptionRequest.subscription:type_name -> subscription.Subscription
-	0, // 2: subscription.AddSubscriptionResponse.subscription:type_name -> subscription.Subscription
-	0, // 3: subscription.UpdatedSubscriptionResponse.subscription:type_name -> subscription.Subscription
-	0, // 4: subscription.DeleteSubscriptionResponse.subscription:type_name -> subscription.Subscription
-	1, // 5: subscription.SubscriptionService.ListSubscriptions:input_type -> subscription.ListSubscriptionsRequest
-	3, // 6: subscription.SubscriptionService.AddSubscription:input_type -> subscription.AddSubscriptionRequest
-	5, // 7: subscription.SubscriptionService.UpdatedSubscription:input_type -> subscription.UpdatedSubscriptionRequest
-	7, // 8: subscription.SubscriptionService.DeleteSubscription:input_type -> subscription.DeleteSubscriptionRequest
-	2, // 9: subscription.SubscriptionService.ListSubscriptions:output_type -> subscription.ListSubscriptionsResponse
-	4, // 10: subscription.SubscriptionService.AddSubscription:output_type -> subscription.AddSubscriptionResponse
-	6, // 11: subscription.SubscriptionService.UpdatedSubscription:output_type -> subscription.UpdatedSubscriptionResponse
-	8, // 12: subscription.SubscriptionService.DeleteSubscription:output_type -> subscription.DeleteSubscriptionResponse
-	9, // [9:13] is the sub-list for method output_type
-	5, // [5:9] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0,  // 0: subscription.ListSubscriptionsResponse.subscriptions:type_name -> subscription.Subscription
+	0,  // 1: subscription.AddSubscriptionRequest.subscription:type_name -> subscription.Subscription
+	0,  // 2: subscription.AddSubscriptionResponse.subscription:type_name -> subscription.Subscription
+	0,  // 3: subscription.UpdatedSubscriptionResponse.subscription:type_name -> subscription.Subscription
+	0,  // 4: subscription.DeleteSubscriptionResponse.subscription:type_name -> subscription.Subscription
+	1,  // 5: subscription.SubscriptionService.ListSubscriptions:input_type -> subscription.ListSubscriptionsRequest
+	3,  // 6: subscription.SubscriptionService.AddSubscription:input_type -> subscription.AddSubscriptionRequest
+	5,  // 7: subscription.SubscriptionService.UpdatedSubscription:input_type -> subscription.UpdatedSubscriptionRequest
+	7,  // 8: subscription.SubscriptionService.DeleteSubscription:input_type -> subscription.DeleteSubscriptionRequest
+	9,  // 9: subscription.SubscriptionService.TotalPrice:input_type -> subscription.TotalPriceRequest
+	2,  // 10: subscription.SubscriptionService.ListSubscriptions:output_type -> subscription.ListSubscriptionsResponse
+	4,  // 11: subscription.SubscriptionService.AddSubscription:output_type -> subscription.AddSubscriptionResponse
+	6,  // 12: subscription.SubscriptionService.UpdatedSubscription:output_type -> subscription.UpdatedSubscriptionResponse
+	8,  // 13: subscription.SubscriptionService.DeleteSubscription:output_type -> subscription.DeleteSubscriptionResponse
+	10, // 14: subscription.SubscriptionService.TotalPrice:output_type -> subscription.TotalPriceResponse
+	10, // [10:15] is the sub-list for method output_type
+	5,  // [5:10] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_contract_proto_init() }
@@ -691,13 +817,14 @@ func file_contract_proto_init() {
 	}
 	file_contract_proto_msgTypes[1].OneofWrappers = []any{}
 	file_contract_proto_msgTypes[5].OneofWrappers = []any{}
+	file_contract_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_contract_proto_rawDesc), len(file_contract_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -16,49 +16,58 @@ func ListSubscriptions(
 	ctx context.Context,
 	db *sql.DB,
 	serviceName, userUuid *string,
-	startDate, stopDate *string,
 ) ([]crud.ListSubscriptionsRow, error) {
-	var (
-		start time.Time
-		stop  time.Time
-	)
+	log.Println(`start function 'ListSubscriptions' into controller/usecase`)
 
-	if startDate != nil {
-		dt, err := time.Parse("01.2006", *startDate)
-		if err != nil {
-			log.Printf("bad start date format, must be - 'MM.YYYY' but received - '%s'", *startDate)
-			return nil, err
-		}
-		start = time.Date(dt.Year(), dt.Month(), 1, 0, 0, 0, 0, time.UTC)
+	q := crud.New(db)
+	resp, err := q.ListSubscriptions(ctx, crud.ListSubscriptionsParams{
+		Column1: *userUuid,
+		Column2: *serviceName,
+	})
+	if err != nil {
+		log.Printf("error occured while executig db query - 'ListSubscriptions', error - '%s'", err.Error())
+		return []crud.ListSubscriptionsRow{}, err
 	}
 
-	if stopDate != nil {
-		dt, err := time.Parse("01.2006", *stopDate)
-		if err != nil {
-			log.Printf("bad stop date format, must be - 'MM.YYYY' but received - '%s'", *stopDate)
-			return nil, err
-		}
-		stop = time.Date(dt.Year(), dt.Month(), 1, 0, 0, 0, 0, time.UTC)
+	return resp, nil
+}
+
+func TotalPrice(
+	ctx context.Context,
+	db *sql.DB,
+	startDate, stopDate string,
+	userUuid, serviceName *string,
+) (int64, error) {
+	log.Println(`start function 'ListTotalPrice' into controller/usecase`)
+
+	dateSlc, err := transformDate(startDate, stopDate)
+	if err != nil {
+		log.Printf("error occured while transform date from string-type to time.Time-type, %v", err)
+		return 0, err
 	}
 
-	if startDate != nil && stopDate != nil {
-		if start.After(stop) {
-			log.Printf("incorrect date range - start: '%s', stop: '%s'", start, stop)
-			return nil, errors.New("bad date range")
-		}
+	start, stop := dateSlc[0], dateSlc[1]
+	if start.After(stop) {
+		log.Printf("start date must be less than the stop date")
+		return 0, errors.New("start date more than stop date")
 	}
 
 	q := crud.New(db)
-	dbResp, err := q.ListSubscriptions(ctx, crud.ListSubscriptionsParams{
-		Column1: start,
-		Column2: stop,
-		Column3: *userUuid,
-		Column4: *serviceName,
-	})
+	totalPrice, err := q.TotalPriceSubscriptions(
+		ctx,
+		crud.TotalPriceSubscriptionsParams{
+			Column1: start,
+			Column2: stop,
+			Column3: *userUuid,
+			Column4: *serviceName,
+		},
+	)
 	if err != nil {
-		log.Printf("DB request failed with an error - '%s'", err.Error())
+		log.Printf("error occured while executig db query - 'TotalPriceSubscriptions', error - '%s'", err.Error())
+		return 0, err
 	}
-	return dbResp, nil
+
+	return totalPrice, nil
 }
 
 func AddSubscription(

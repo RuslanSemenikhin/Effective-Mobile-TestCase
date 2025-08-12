@@ -28,30 +28,55 @@ func (s *Server) ListSubscriptions(
 		s.db,
 		req.ServiceName,
 		req.UserUuid,
-		req.StartDate,
-		req.StopDate,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	subsInfos := []*grpcGen.ListSubscriptionsInfo{}
-
+	resp := []*grpcGen.Subscription{}
 	for _, r := range res {
-		subInfo := &grpcGen.ListSubscriptionsInfo{
-			UserUuid:    r.UserUuid,
+		resp = append(resp, &grpcGen.Subscription{
 			ServiceName: r.ServiceName.String,
-			Price:       r.ServicePrice,
-		}
-		subsInfos = append(subsInfos, subInfo)
+			Price:       int64(r.ServicePrice.Int32),
+			UserUuid:    r.UserUuid,
+			StartDate:   r.StartDate.Format("01.2006"),
+			StopDate:    r.StopDate.Format("01.2006"),
+		})
 	}
 
-	subsSlc := &grpcGen.ListSubscriptionsResponse{
+	r := &grpcGen.ListSubscriptionsResponse{
 		ReqId:         req.ReqId,
-		Subscriptions: subsInfos,
+		Subscriptions: resp,
 	}
+
 	log.Printf("finished successfuly method 'ListSubscriptions' into controller/grpc with requestId - '%s'", req.ReqId)
-	return subsSlc, nil
+	return r, nil
+}
+
+func (s *Server) TotalPrice(
+	ctx context.Context,
+	req *grpcGen.TotalPriceRequest,
+) (*grpcGen.TotalPriceResponse, error) {
+	log.Printf("start method 'TotalPrice' into controller/grpc with requestId - '%s'", req.ReqID)
+	totalPrice, err := usecase.TotalPrice(
+		ctx,
+		s.db,
+		req.StartDate,
+		req.StopDate,
+		req.UserUuid,
+		req.ServiceName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &grpcGen.TotalPriceResponse{
+		ReqID:      req.ReqID,
+		TotalPrice: totalPrice,
+	}
+	log.Printf("finished successfuly method 'TotalPrice' into controller/grpc with requestId - '%s'", req.ReqID)
+	return resp, nil
+
 }
 
 func (s *Server) AddSubscription(

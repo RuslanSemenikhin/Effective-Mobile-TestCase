@@ -9,6 +9,7 @@ service SubscriptionService {
     rpc AddSubscription (AddSubscriptionRequest) returns (AddSubscriptionResponse);
     rpc UpdatedSubscription (UpdatedSubscriptionRequest) returns (UpdatedSubscriptionResponse);
     rpc DeleteSubscription (DeleteSubscriptionRequest) returns (DeleteSubscriptionResponse);
+    rpc TotalPrice (TotalPriceRequest) returns (TotalPriceResponse);
 }
 
 message Subscription {
@@ -19,23 +20,15 @@ message Subscription {
     string stop_date = 5;
 }
 
-message ListSubscriptionsInfo{
-    string user_uuid = 1;
-    string service_name = 2;
-    int64 price =3;
-}
-
 message ListSubscriptionsRequest {
     string req_id = 1;
-    optional string start_date = 2;
-    optional string stop_date = 3;
     optional string user_uuid = 4;
     optional string service_name = 5;
 }
 
 message ListSubscriptionsResponse {
     string req_id = 1;
-    repeated ListSubscriptionsInfo subscriptions = 2;
+    repeated Subscription subscriptions = 2;
 }
 
 message AddSubscriptionRequest{
@@ -71,4 +64,17 @@ message DeleteSubscriptionRequest{
 message DeleteSubscriptionResponse{
     string reqID = 1;
     Subscription subscription = 2;
+}
+
+message TotalPriceRequest{
+    string reqID = 1;
+    string start_date = 2;
+    string stop_date = 3;
+    optional string user_uuid = 4;
+    optional string service_name = 5;
+}
+
+message TotalPriceResponse{
+    string reqID = 1;
+    repeated int64 total_price = 2;
 }

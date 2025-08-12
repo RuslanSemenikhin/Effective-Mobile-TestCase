@@ -23,6 +23,7 @@ const (
 	SubscriptionService_AddSubscription_FullMethodName     = "/subscription.SubscriptionService/AddSubscription"
 	SubscriptionService_UpdatedSubscription_FullMethodName = "/subscription.SubscriptionService/UpdatedSubscription"
 	SubscriptionService_DeleteSubscription_FullMethodName  = "/subscription.SubscriptionService/DeleteSubscription"
+	SubscriptionService_TotalPrice_FullMethodName          = "/subscription.SubscriptionService/TotalPrice"
 )
 
 // SubscriptionServiceClient is the client API for SubscriptionService service.
@@ -33,6 +34,7 @@ type SubscriptionServiceClient interface {
 	AddSubscription(ctx context.Context, in *AddSubscriptionRequest, opts ...grpc.CallOption) (*AddSubscriptionResponse, error)
 	UpdatedSubscription(ctx context.Context, in *UpdatedSubscriptionRequest, opts ...grpc.CallOption) (*UpdatedSubscriptionResponse, error)
 	DeleteSubscription(ctx context.Context, in *DeleteSubscriptionRequest, opts ...grpc.CallOption) (*DeleteSubscriptionResponse, error)
+	TotalPrice(ctx context.Context, in *TotalPriceRequest, opts ...grpc.CallOption) (*TotalPriceResponse, error)
 }
 
 type subscriptionServiceClient struct {
@@ -83,6 +85,16 @@ func (c *subscriptionServiceClient) DeleteSubscription(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *subscriptionServiceClient) TotalPrice(ctx context.Context, in *TotalPriceRequest, opts ...grpc.CallOption) (*TotalPriceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TotalPriceResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_TotalPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionServiceServer is the server API for SubscriptionService service.
 // All implementations must embed UnimplementedSubscriptionServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type SubscriptionServiceServer interface {
 	AddSubscription(context.Context, *AddSubscriptionRequest) (*AddSubscriptionResponse, error)
 	UpdatedSubscription(context.Context, *UpdatedSubscriptionRequest) (*UpdatedSubscriptionResponse, error)
 	DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error)
+	TotalPrice(context.Context, *TotalPriceRequest) (*TotalPriceResponse, error)
 	mustEmbedUnimplementedSubscriptionServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedSubscriptionServiceServer) UpdatedSubscription(context.Contex
 }
 func (UnimplementedSubscriptionServiceServer) DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubscription not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) TotalPrice(context.Context, *TotalPriceRequest) (*TotalPriceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TotalPrice not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
 func (UnimplementedSubscriptionServiceServer) testEmbeddedByValue()                             {}
@@ -206,6 +222,24 @@ func _SubscriptionService_DeleteSubscription_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionService_TotalPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TotalPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).TotalPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_TotalPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).TotalPrice(ctx, req.(*TotalPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteSubscription",
 			Handler:    _SubscriptionService_DeleteSubscription_Handler,
+		},
+		{
+			MethodName: "TotalPrice",
+			Handler:    _SubscriptionService_TotalPrice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

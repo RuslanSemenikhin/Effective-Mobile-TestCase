@@ -113,37 +113,32 @@ const listSubscriptions = `-- name: ListSubscriptions :many
 SELECT
     ssub.user_uuid as "user_uuid",
     sser.name as "service_name",
-    SUM(sser.price) as "service_price"
+    sser.price as "service_price",
+    ssub.start_date,
+    ssub.stop_date
 FROM services.subscription ssub
 LEFT JOIN services.services sser on sser.uuid = ssub.service_uuid
 WHERE
-    ($1::DATE IS NULL OR ssub.start_date >= $1) AND
-    ($2::DATE IS NULL OR ssub.stop_date <= $2) AND
-    ($3::VARCHAR IS NULL OR ssub.user_uuid = $3) AND
-    ($4::VARCHAR IS NULL OR sser.name = $4)
-GROUP BY ssub.user_uuid, sser.name
+    CASE WHEN $1::VARCHAR LIKE '' THEN 1=1 ELSE ssub.user_uuid LIKE $1::VARCHAR END
+    AND
+    CASE WHEN $2::VARCHAR LIKE '' THEN 1=1 ELSE sser.name LIKE $2::VARCHAR END
 `
 
 type ListSubscriptionsParams struct {
-	Column1 time.Time
-	Column2 time.Time
-	Column3 string
-	Column4 string
+	Column1 string
+	Column2 string
 }
 
 type ListSubscriptionsRow struct {
 	UserUuid     string
 	ServiceName  sql.NullString
-	ServicePrice int64
+	ServicePrice sql.NullInt32
+	StartDate    time.Time
+	StopDate     time.Time
 }
 
 func (q *Queries) ListSubscriptions(ctx context.Context, arg ListSubscriptionsParams) ([]ListSubscriptionsRow, error) {
-	rows, err := q.db.QueryContext(ctx, listSubscriptions,
-		arg.Column1,
-		arg.Column2,
-		arg.Column3,
-		arg.Column4,
-	)
+	rows, err := q.db.QueryContext(ctx, listSubscriptions, arg.Column1, arg.Column2)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +146,13 @@ func (q *Queries) ListSubscriptions(ctx context.Context, arg ListSubscriptionsPa
 	var items []ListSubscriptionsRow
 	for rows.Next() {
 		var i ListSubscriptionsRow
-		if err := rows.Scan(&i.UserUuid, &i.ServiceName, &i.ServicePrice); err != nil {
+		if err := rows.Scan(
+			&i.UserUuid,
+			&i.ServiceName,
+			&i.ServicePrice,
+			&i.StartDate,
+			&i.StopDate,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -163,4 +164,36 @@ func (q *Queries) ListSubscriptions(ctx context.Context, arg ListSubscriptionsPa
 		return nil, err
 	}
 	return items, nil
+}
+
+const totalPriceSubscriptions = `-- name: TotalPriceSubscriptions :one
+SELECT
+   SUM(sser.price) as "total_price"
+FROM services.subscription ssub
+LEFT JOIN services.services sser on sser.uuid = ssub.service_uuid
+WHERE
+    (ssub.start_date >= $1::DATE) AND
+    (ssub.stop_date <= $2::DATE) AND
+    CASE WHEN $3::VARCHAR LIKE '' THEN 1=1 ELSE ssub.user_uuid LIKE $3::VARCHAR END 
+    AND
+    CASE WHEN $4::VARCHAR LIKE '' THEN 1=1 ELSE sser.name LIKE $4::VARCHAR END
+`
+
+type TotalPriceSubscriptionsParams struct {
+	Column1 time.Time
+	Column2 time.Time
+	Column3 string
+	Column4 string
+}
+
+func (q *Queries) TotalPriceSubscriptions(ctx context.Context, arg TotalPriceSubscriptionsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, totalPriceSubscriptions,
+		arg.Column1,
+		arg.Column2,
+		arg.Column3,
+		arg.Column4,
+	)
+	var total_price int64
+	err := row.Scan(&total_price)
+	return total_price, err
 }

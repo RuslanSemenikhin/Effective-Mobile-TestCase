@@ -23,14 +23,10 @@ func ListSubscriptions(
 ) {
 	reqID := uuid.New().String()
 	log.Printf("function 'ListSubscriptions' into endpoint service start with requestID - '%s'", reqID)
-	dateAt := ctx.Query("start_date")
-	dateTo := ctx.Query("stop_date")
 	userUuid := ctx.Query("user_uuid")
 	serviceName := ctx.Query("service_name")
 	req := &g.ListSubscriptionsRequest{
 		ReqId:       reqID,
-		StartDate:   &dateAt,
-		StopDate:    &dateTo,
 		UserUuid:    &userUuid,
 		ServiceName: &serviceName,
 	}
@@ -47,6 +43,38 @@ func ListSubscriptions(
 	log.Printf("function 'ListSubscriptions' into endpoint service finished successfuly with requestID - '%s'", reqID)
 }
 
+func TotalPrice(
+	ctx *gin.Context,
+	client g.SubscriptionServiceClient,
+) {
+	reqID := uuid.New().String()
+	log.Printf("function 'TotalPrice' into endpoint service start with requestID - '%s'", reqID)
+	startDate := ctx.Query("date_start")
+	stopDate := ctx.Query("date_stop")
+	userUuid := ctx.Query("user_uuid")
+	serviceName := ctx.Query("service_name")
+
+	req := &g.TotalPriceRequest{
+		ReqID:       reqID,
+		StartDate:   startDate,
+		StopDate:    stopDate,
+		UserUuid:    &userUuid,
+		ServiceName: &serviceName,
+	}
+
+	totalPrice, err := client.TotalPrice(ctx, req)
+	if err != nil {
+		log.Printf("function 'TotalPrice' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, totalPrice)
+	log.Printf("function 'TotalPrice' into endpoint service finished successfuly with requestID - '%s'", reqID)
+}
+
 func AddSubscription(
 	ctx *gin.Context,
 	client g.SubscriptionServiceClient,
@@ -61,6 +89,7 @@ func AddSubscription(
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	s := &g.Subscription{
@@ -82,6 +111,7 @@ func AddSubscription(
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, resp)
