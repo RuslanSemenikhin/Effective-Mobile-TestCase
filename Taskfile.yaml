@@ -14,9 +14,21 @@ tasks:
     dir: ./rpc
     cmds:
       - protoc --go_out=./ --go-grpc_out=./ --proto_path=./proto proto/contract.proto
-    
-  big_start:
-    desc: "Запуск всех сервисов"
-    deps: [sqlc_generation]
+  
+  start:
+    desc: "start services into docker-compose"
+    dir: .
     cmds:
-      - docker compose --env-file ./.env -f ./docker-compose.yaml up --build -d
+      - docker compose up -d --build
+
+  stop:
+    desc: "stope and delete all containers"
+    cmds:
+      - docker compose down
+
+  restart:
+    desc: "restatr all containers"
+    cmds:
+      - task: stop
+      - task: start
+

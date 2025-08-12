@@ -50,6 +50,12 @@ RETURNING *;
 DELETE FROM services.services
 WHERE uuid = $1;
 
+-- name: DeleteSubscription :execrows
+DELETE FROM services.subscription
+WHERE 
+    user_uuid = $1
+    AND service_uuid = (SELECT ser.uuid FROM services.services ser WHERE ser.name = $2);
+
 -- name: AddSubscription :one
 INSERT INTO services.subscription (user_uuid, service_uuid, start_date, stop_date)
 VALUES ($1, $2, $3, $4)

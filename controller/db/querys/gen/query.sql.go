@@ -71,6 +71,26 @@ func (q *Queries) DeleteService(ctx context.Context, uuid string) error {
 	return err
 }
 
+const deleteSubscription = `-- name: DeleteSubscription :execrows
+DELETE FROM services.subscription
+WHERE 
+    user_uuid = $1
+    AND service_uuid = (SELECT ser.uuid FROM services.services ser WHERE ser.name = $2)
+`
+
+type DeleteSubscriptionParams struct {
+	UserUuid string
+	Name     string
+}
+
+func (q *Queries) DeleteSubscription(ctx context.Context, arg DeleteSubscriptionParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, deleteSubscription, arg.UserUuid, arg.Name)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
 const existingService = `-- name: ExistingService :one
 SELECT
     ser.uuid

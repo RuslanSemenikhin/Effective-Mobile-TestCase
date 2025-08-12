@@ -145,20 +145,20 @@ func (s *Server) DeleteSubscription(
 	req *grpcGen.DeleteSubscriptionRequest,
 ) (*grpcGen.DeleteSubscriptionResponse, error) {
 	log.Printf("start method 'DeleteSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
-	res := usecase.DeleteSubscription(
+	err := usecase.DeleteSubscription(
 		ctx,
 		s.db,
 		req.ServiceName,
 		req.UserUuid,
 	)
-	log.Println(res)
-	sub := &grpcGen.Subscription{
-		ServiceName: res,
+	if err != nil {
+		return nil, err
 	}
 
 	resp := &grpcGen.DeleteSubscriptionResponse{
-		ReqID:        req.ReqID,
-		Subscription: sub,
+		ReqID:       req.ReqID,
+		UserUuid:    req.UserUuid,
+		ServiceName: req.ServiceName,
 	}
 	log.Printf("finished successfuly method 'DeleteSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
 	return resp, nil

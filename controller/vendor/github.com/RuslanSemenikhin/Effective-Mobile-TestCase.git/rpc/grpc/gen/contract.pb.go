@@ -512,7 +512,8 @@ func (x *DeleteSubscriptionRequest) GetServiceName() string {
 type DeleteSubscriptionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReqID         string                 `protobuf:"bytes,1,opt,name=reqID,proto3" json:"reqID,omitempty"`
-	Subscription  *Subscription          `protobuf:"bytes,2,opt,name=subscription,proto3" json:"subscription,omitempty"`
+	UserUuid      string                 `protobuf:"bytes,2,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
+	ServiceName   string                 `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -554,11 +555,18 @@ func (x *DeleteSubscriptionResponse) GetReqID() string {
 	return ""
 }
 
-func (x *DeleteSubscriptionResponse) GetSubscription() *Subscription {
+func (x *DeleteSubscriptionResponse) GetUserUuid() string {
 	if x != nil {
-		return x.Subscription
+		return x.UserUuid
 	}
-	return nil
+	return ""
+}
+
+func (x *DeleteSubscriptionResponse) GetServiceName() string {
+	if x != nil {
+		return x.ServiceName
+	}
+	return ""
 }
 
 type TotalPriceRequest struct {
@@ -737,8 +745,9 @@ const file_contract_proto_rawDesc = "" +
 	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12!\n" +
 	"\fservice_name\x18\x03 \x01(\tR\vserviceName\"r\n" +
 	"\x1aDeleteSubscriptionResponse\x12\x14\n" +
-	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12>\n" +
-	"\fsubscription\x18\x02 \x01(\v2\x1a.subscription.SubscriptionR\fsubscription\"\xce\x01\n" +
+	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12\x1b\n" +
+	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12!\n" +
+	"\fservice_name\x18\x03 \x01(\tR\vserviceName\"\xce\x01\n" +
 	"\x11TotalPriceRequest\x12\x14\n" +
 	"\x05reqID\x18\x01 \x01(\tR\x05reqID\x12\x1d\n" +
 	"\n" +
@@ -792,22 +801,21 @@ var file_contract_proto_depIdxs = []int32{
 	0,  // 1: subscription.AddSubscriptionRequest.subscription:type_name -> subscription.Subscription
 	0,  // 2: subscription.AddSubscriptionResponse.subscription:type_name -> subscription.Subscription
 	0,  // 3: subscription.UpdatedSubscriptionResponse.subscription:type_name -> subscription.Subscription
-	0,  // 4: subscription.DeleteSubscriptionResponse.subscription:type_name -> subscription.Subscription
-	1,  // 5: subscription.SubscriptionService.ListSubscriptions:input_type -> subscription.ListSubscriptionsRequest
-	3,  // 6: subscription.SubscriptionService.AddSubscription:input_type -> subscription.AddSubscriptionRequest
-	5,  // 7: subscription.SubscriptionService.UpdatedSubscription:input_type -> subscription.UpdatedSubscriptionRequest
-	7,  // 8: subscription.SubscriptionService.DeleteSubscription:input_type -> subscription.DeleteSubscriptionRequest
-	9,  // 9: subscription.SubscriptionService.TotalPrice:input_type -> subscription.TotalPriceRequest
-	2,  // 10: subscription.SubscriptionService.ListSubscriptions:output_type -> subscription.ListSubscriptionsResponse
-	4,  // 11: subscription.SubscriptionService.AddSubscription:output_type -> subscription.AddSubscriptionResponse
-	6,  // 12: subscription.SubscriptionService.UpdatedSubscription:output_type -> subscription.UpdatedSubscriptionResponse
-	8,  // 13: subscription.SubscriptionService.DeleteSubscription:output_type -> subscription.DeleteSubscriptionResponse
-	10, // 14: subscription.SubscriptionService.TotalPrice:output_type -> subscription.TotalPriceResponse
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	1,  // 4: subscription.SubscriptionService.ListSubscriptions:input_type -> subscription.ListSubscriptionsRequest
+	3,  // 5: subscription.SubscriptionService.AddSubscription:input_type -> subscription.AddSubscriptionRequest
+	5,  // 6: subscription.SubscriptionService.UpdatedSubscription:input_type -> subscription.UpdatedSubscriptionRequest
+	7,  // 7: subscription.SubscriptionService.DeleteSubscription:input_type -> subscription.DeleteSubscriptionRequest
+	9,  // 8: subscription.SubscriptionService.TotalPrice:input_type -> subscription.TotalPriceRequest
+	2,  // 9: subscription.SubscriptionService.ListSubscriptions:output_type -> subscription.ListSubscriptionsResponse
+	4,  // 10: subscription.SubscriptionService.AddSubscription:output_type -> subscription.AddSubscriptionResponse
+	6,  // 11: subscription.SubscriptionService.UpdatedSubscription:output_type -> subscription.UpdatedSubscriptionResponse
+	8,  // 12: subscription.SubscriptionService.DeleteSubscription:output_type -> subscription.DeleteSubscriptionResponse
+	10, // 13: subscription.SubscriptionService.TotalPrice:output_type -> subscription.TotalPriceResponse
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_contract_proto_init() }

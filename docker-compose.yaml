@@ -20,12 +20,19 @@ services:
         - ${DATA_DB_VOLUME_PATH}:/var/lib/postgresql/data
       networks:
         - effective_modile
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+        interval: 5s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
 
     migrations: 
       image: migrate/migrate
       container_name: ${CONTAINER_MIGRATE_NAME}
       depends_on:
-        - postgres
+        postgres:
+          condition: service_healthy
       command:
         - "-path=${VOLUME_PATH_MIGR_ON_CONT}"
         - "-database=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB_NAME}?sslmode=disable"

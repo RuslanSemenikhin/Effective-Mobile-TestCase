@@ -164,8 +164,23 @@ func DeleteSubscription(
 	ctx context.Context,
 	db *sql.DB,
 	serviceName, userUuid string,
-) string {
-	return "'DeleteSubscription' method into controller"
+) error {
+	log.Println(`start function 'DeleteSubscription' into controller/usecase`)
+	q := crud.New(db)
+	row, err := q.DeleteSubscription(ctx, crud.DeleteSubscriptionParams{
+		UserUuid: userUuid,
+		Name:     serviceName,
+	})
+	if err != nil {
+		log.Printf("error occured while executig db query - 'DeleteSubscription' in method 'DeleteSubscription', error - '%s'", err.Error())
+		return err
+	}
+
+	if row == 0 {
+		log.Printf("subscription on service - '%s' for user - '%s' does not exists", serviceName, userUuid)
+		return errors.New("subscription does not exists")
+	}
+	return nil
 }
 
 func transformDate(dates ...string) ([]time.Time, error) {

@@ -161,8 +161,8 @@ func DeleteSubscription(
 	reqID := uuid.New().String()
 	log.Printf("function 'DeleteSubscription' into endpoint service start with requestID - '%s'", reqID)
 
-	userUuid := ctx.Query("user_uuid")
-	serviceName := ctx.Query("service_name")
+	userUuid := ctx.Param("user_uuid")
+	serviceName := ctx.Param("service_name")
 
 	r := &g.DeleteSubscriptionRequest{
 		ReqID:       reqID,

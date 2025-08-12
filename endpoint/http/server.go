@@ -50,6 +50,6 @@ func initializeRoutes(router *gin.Engine, client g.SubscriptionServiceClient) {
 	router.GET("/service/subscription", func(ctx *gin.Context) { control.ListSubscriptions(ctx, client) })
 	router.POST("/service/subscription", func(ctx *gin.Context) { control.AddSubscription(ctx, client) })
 	router.PUT("/service/subscription", func(ctx *gin.Context) { control.UpdatedSubscription(ctx, client) })
-	router.DELETE("/service/subscription", func(ctx *gin.Context) { control.DeleteSubscription(ctx, client) })
+	router.DELETE("/service/subscription/service/:service_name/user/:user_uuid", func(ctx *gin.Context) { control.DeleteSubscription(ctx, client) })
 	router.GET("/service/subscription/totalprice", func(ctx *gin.Context) { control.TotalPrice(ctx, client) })
 }
