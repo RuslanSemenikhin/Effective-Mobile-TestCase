@@ -18,9 +18,9 @@
     "start_date": "06.2025",
     "stop_date": "10.2025"
    }
-   4. PUT /service/{service_name}/user/{user_uuid}/subscription - запрос изменения параметров подписки, новые параметры необходимо передать параметры в формате json в тело запроса: {
+   4. PUT /service/{service_name}/user/{user_uuid}/subscription - запрос изменения параметров подписки, новые параметры необходимо передать в формате json в тело запроса: {
     "price": 4321,
     "start_date": "06.2025",
     "stop_date": "10.2025"
    }
-   5. DELETE /service/{service_name}/user/{user_uuid}/subscription - запрос на удаление выбранной подписке по user_uuid и service_nameю.
+   5. DELETE /service/{service_name}/user/{user_uuid}/subscription - запрос на удаление выбранной подписки по user_uuid и service_name.
