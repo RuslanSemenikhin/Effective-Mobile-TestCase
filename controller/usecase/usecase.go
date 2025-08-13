@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -156,8 +157,125 @@ func UpdatedSubscription(
 	serviceName, userUuid string,
 	price *int64,
 	startDate, stopDate *string,
-) string {
-	return "'UpdatedSubscription' method into controller"
+) (crud.ListSubscriptionsRow, error) {
+	changedDate := false
+	changedSub := false
+	q := crud.New(db)
+	subs, err := q.ListSubscriptions(ctx, crud.ListSubscriptionsParams{
+		Column1: userUuid,
+		Column2: serviceName,
+	})
+	if err != nil {
+		log.Printf("error occured while executig db query - 'ListSubscriptions', error - '%s'", err.Error())
+		return crud.ListSubscriptionsRow{}, err
+	}
+	currentSub := subs[0]
+
+	if startDate != nil || stopDate != nil {
+		var (
+			newStart time.Time
+			newStop  time.Time
+		)
+
+		if startDate != nil {
+			dtSlc, err := transformDate(*startDate)
+			if err != nil {
+				return crud.ListSubscriptionsRow{}, err
+			}
+			newStart = dtSlc[0]
+		}
+
+		if stopDate != nil {
+			dtSlc, err := transformDate(*stopDate)
+			if err != nil {
+				return crud.ListSubscriptionsRow{}, err
+			}
+			newStop = dtSlc[0]
+		}
+
+		if !newStart.IsZero() && !newStop.IsZero() {
+			if newStart.After(newStop) {
+				log.Printf("start date must be less than the stop date")
+				return crud.ListSubscriptionsRow{}, errors.New("start date more than stop date")
+			}
+			if newStart == currentSub.StartDate && newStop == currentSub.StopDate {
+
+			}
+		} else if !newStart.IsZero() {
+			if newStart.After(currentSub.StopDate) {
+				log.Printf("new date start - '%v' more then old date stop - '%v' for service - '%s' user - '%s'", newStart, currentSub.StopDate, serviceName, userUuid)
+				return crud.ListSubscriptionsRow{}, fmt.Errorf("new date start - '%v' more then old date stop - '%v'", newStart, currentSub.StopDate)
+			}
+			newStop = currentSub.StopDate
+		} else if !newStop.IsZero() {
+			if currentSub.StartDate.After(newStop) {
+				log.Printf("new date stop - '%v' less then old date start - '%v' for service - '%s' user - '%s'", newStop, currentSub.StartDate, serviceName, userUuid)
+				return crud.ListSubscriptionsRow{}, fmt.Errorf("new date stop - '%v' less then old date start - '%v'", newStop, currentSub.StartDate)
+			}
+			newStart = currentSub.StartDate
+		}
+
+		quantity, err := q.ChangeSubscriptionData(ctx, crud.ChangeSubscriptionDataParams{
+			Column1: newStart,
+			Column2: newStop,
+			Column3: userUuid,
+			Column4: serviceName,
+		})
+		if err != nil {
+			log.Printf("error occured while executig db query - 'ChangeSubscriptionData', error - '%s'", err.Error())
+			return crud.ListSubscriptionsRow{}, err
+		}
+
+		if quantity == 0 {
+			log.Printf("service - '%s' for user - '%s' does not exists", serviceName, userUuid)
+			return crud.ListSubscriptionsRow{}, err
+		}
+		changedSub = true
+		changedDate = true
+	}
+
+	if price != nil {
+		quantity, err := q.UpdateService(ctx, crud.UpdateServiceParams{
+			Column1: int32(*price),
+			Column2: serviceName,
+		})
+		if err != nil {
+			log.Printf("error occured while executig db query - 'UpdateService', error - '%s'", err.Error())
+			if changedDate {
+				q.ChangeSubscriptionData(ctx, crud.ChangeSubscriptionDataParams{ // transaction-rollback
+					Column1: currentSub.StartDate,
+					Column2: currentSub.StopDate,
+					Column3: userUuid,
+					Column4: serviceName,
+				})
+			}
+			return crud.ListSubscriptionsRow{}, err
+		}
+
+		if quantity == 0 {
+			log.Printf("srvice - '%s' not found", serviceName)
+			if changedDate {
+				q.ChangeSubscriptionData(ctx, crud.ChangeSubscriptionDataParams{ // transaction-rollback
+					Column1: currentSub.StartDate,
+					Column2: currentSub.StopDate,
+					Column3: userUuid,
+					Column4: serviceName,
+				})
+			}
+			return crud.ListSubscriptionsRow{}, err
+		}
+		changedSub = true
+	}
+
+	if changedSub {
+		allData, _ := q.ListSubscriptions(ctx, crud.ListSubscriptionsParams{
+			Column1: userUuid,
+			Column2: serviceName,
+		})
+		return allData[0], nil
+	}
+	log.Printf("for service - '%s' user - '%s' nothing to change", serviceName, userUuid)
+	return crud.ListSubscriptionsRow{}, nil
 }
 
 func DeleteSubscription(

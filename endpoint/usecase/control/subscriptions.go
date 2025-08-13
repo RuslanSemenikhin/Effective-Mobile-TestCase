@@ -17,6 +17,12 @@ type SubRequest struct {
 	StopDate    string `json:"stop_date"`
 }
 
+type PropsForUpdateREquest struct {
+	Price     *int64  `json:"price"`
+	StartDate *string `json:"start_date"`
+	StopDate  *string `json:"stop_date"`
+}
+
 func ListSubscriptions(
 	ctx *gin.Context,
 	client g.SubscriptionServiceClient,
@@ -49,8 +55,8 @@ func TotalPrice(
 ) {
 	reqID := uuid.New().String()
 	log.Printf("function 'TotalPrice' into endpoint service start with requestID - '%s'", reqID)
-	startDate := ctx.Query("date_start")
-	stopDate := ctx.Query("date_stop")
+	startDate := ctx.Param("date_start")
+	stopDate := ctx.Param("date_stop")
 	userUuid := ctx.Query("user_uuid")
 	serviceName := ctx.Query("service_name")
 
@@ -125,9 +131,11 @@ func UpdatedSubscription(
 	reqID := uuid.New().String()
 	log.Printf("function 'UpdatedSubscription' into endpoint service start with requestID - '%s'", reqID)
 
-	var req SubRequest
+	service_name := ctx.Param("service_name")
+	user_uuid := ctx.Param("user_uuid")
+	var req PropsForUpdateREquest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		log.Printf("function 'AddSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
+		log.Printf("function 'UpdatedSubscription' into endpoint service finished with error, requestID - '%s', error - '%v'", reqID, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -135,11 +143,11 @@ func UpdatedSubscription(
 
 	r := &g.UpdatedSubscriptionRequest{
 		ReqID:       reqID,
-		UserUuid:    req.UserUuid,
-		ServiceName: req.ServiceName,
-		StartDate:   &req.StartDate,
-		StopDate:    &req.StopDate,
-		Price:       &req.Price,
+		UserUuid:    user_uuid,
+		ServiceName: service_name,
+		StartDate:   req.StartDate,
+		StopDate:    req.StopDate,
+		Price:       req.Price,
 	}
 
 	resp, err := client.UpdatedSubscription(ctx, r)

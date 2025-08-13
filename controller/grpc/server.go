@@ -3,9 +3,13 @@ package grpc
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/internal/models"
 	grpcGen "github.com/RuslanSemenikhin/Effective-Mobile-TestCase.git/rpc/grpc/gen"
@@ -118,7 +122,16 @@ func (s *Server) UpdatedSubscription(
 	req *grpcGen.UpdatedSubscriptionRequest,
 ) (*grpcGen.UpdatedSubscriptionResponse, error) {
 	log.Printf("start method 'UpdatedSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
-	res := usecase.UpdatedSubscription(
+	if req.ServiceName == "" {
+		log.Printf("query param - 'service_name' was not sent")
+		return nil, errors.New("'service_name' query param was not set")
+	}
+
+	if req.UserUuid == "" {
+		log.Printf("query param - 'user_uuid' was not sent")
+		return nil, errors.New("'user_uuid' query param was not set")
+	}
+	res, err := usecase.UpdatedSubscription(
 		ctx,
 		s.db,
 		req.ServiceName,
@@ -127,16 +140,23 @@ func (s *Server) UpdatedSubscription(
 		req.StartDate,
 		req.StopDate,
 	)
-	log.Println(res)
+	if err != nil {
+		return nil, err
+	}
+
 	sub := &grpcGen.Subscription{
-		ServiceName: res,
+		ServiceName: res.ServiceName.String,
+		Price:       int64(res.ServicePrice.Int32),
+		UserUuid:    req.UserUuid,
+		StartDate:   res.StartDate.Format("01.2006"),
+		StopDate:    res.StopDate.Format("01.2006"),
 	}
 
 	resp := &grpcGen.UpdatedSubscriptionResponse{
 		ReqID:        req.ReqID,
 		Subscription: sub,
 	}
-	log.Printf("finished successfuly method 'AddSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
+	log.Printf("finished successfuly method 'UpdatedSubscription' into controller/grpc with requestId - '%s'", req.ReqID)
 	return resp, nil
 }
 
@@ -175,13 +195,27 @@ func Start(config *models.Config, dbCon *sql.DB) {
 	grpcGen.RegisterSubscriptionServiceServer(server, &Server{
 		db: dbCon,
 	})
-	log.Printf("controller start on port - '%s'", address)
 
-	if err := server.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve controller: %v", err)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	errChan := make(chan error)
+
+	go func() {
+		log.Printf("controller start on port - '%s'", address)
+		if err := server.Serve(listener); err != nil {
+			log.Fatalf("Failed to serve controller: %v", err)
+			errChan <- err
+		}
+	}()
+
+	select {
+	case <-ctx.Done():
+		log.Println("signal received, shutting down gRPC...")
+	case err := <-errChan:
+		log.Printf("grpc serve error: %v", err)
 	}
-}
 
-func Stop() {
-
+	dbCon.Close()
+	log.Printf("DB connection closed")
 }

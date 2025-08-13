@@ -61,6 +61,36 @@ func (q *Queries) AddSubscription(ctx context.Context, arg AddSubscriptionParams
 	return i, err
 }
 
+const changeSubscriptionData = `-- name: ChangeSubscriptionData :execrows
+UPDATE services.subscription
+    SET 
+        start_date = CASE WHEN $1::DATE IS NULL THEN start_date ELSE $1 END,
+        stop_date = CASE WHEN $2::DATE IS NULL THEN start_date ELSE $2 END
+    WHERE
+        user_uuid = $3::VARCHAR AND
+        service_uuid = (SELECT ser.uuid FROM services.services ser WHERE ser.name = $4::VARCHAR)
+`
+
+type ChangeSubscriptionDataParams struct {
+	Column1 time.Time
+	Column2 time.Time
+	Column3 string
+	Column4 string
+}
+
+func (q *Queries) ChangeSubscriptionData(ctx context.Context, arg ChangeSubscriptionDataParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, changeSubscriptionData,
+		arg.Column1,
+		arg.Column2,
+		arg.Column3,
+		arg.Column4,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
 const deleteService = `-- name: DeleteService :exec
 DELETE FROM services.services
 WHERE uuid = $1
@@ -216,4 +246,25 @@ func (q *Queries) TotalPriceSubscriptions(ctx context.Context, arg TotalPriceSub
 	var total_price int64
 	err := row.Scan(&total_price)
 	return total_price, err
+}
+
+const updateService = `-- name: UpdateService :execrows
+UPDATE services.services
+    SET
+        price = $1::INT4
+    WHERE
+        name = $2::VARCHAR
+`
+
+type UpdateServiceParams struct {
+	Column1 int32
+	Column2 string
+}
+
+func (q *Queries) UpdateService(ctx context.Context, arg UpdateServiceParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateService, arg.Column1, arg.Column2)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }

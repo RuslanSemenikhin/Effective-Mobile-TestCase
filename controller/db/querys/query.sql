@@ -46,6 +46,13 @@ INSERT INTO services.services (uuid, name, price)
 VALUES ($1, $2, $3)
 RETURNING *;
 
+-- name: UpdateService :execrows
+UPDATE services.services
+    SET
+        price = $1::INT4
+    WHERE
+        name = $2::VARCHAR;
+
 -- name: DeleteService :exec
 DELETE FROM services.services
 WHERE uuid = $1;
@@ -60,3 +67,12 @@ WHERE
 INSERT INTO services.subscription (user_uuid, service_uuid, start_date, stop_date)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
+
+-- name: ChangeSubscriptionData :execrows
+UPDATE services.subscription
+    SET 
+        start_date = CASE WHEN $1::DATE IS NULL THEN start_date ELSE $1 END,
+        stop_date = CASE WHEN $2::DATE IS NULL THEN start_date ELSE $2 END
+    WHERE
+        user_uuid = $3::VARCHAR AND
+        service_uuid = (SELECT ser.uuid FROM services.services ser WHERE ser.name = $4::VARCHAR);
